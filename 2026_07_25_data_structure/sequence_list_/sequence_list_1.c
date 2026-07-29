@@ -1,3 +1,4 @@
+//初始化直接使用MainData数组进行初始化
 #include <stdio.h>
 //顺序表：使用连续的内存单元依次存储相同类型元素
 #define MainData 100
@@ -47,6 +48,44 @@ int insert(seq_list *L,int position,Type e){
     
 }
 
+//删除顺序表中元素
+int delete(seq_list *L,int position,Type *e){    //*e返回为被删除的数据
+    if (L->length==0)
+    {
+        printf("为空表\n");
+        return 0;   
+    }else if(position < 1||position > L->length){
+        printf("删除位置错误\n");
+        return 0;
+    }else{
+        *e=L->data[position-1]; //得到删除的值
+        //实现覆盖，然后长度减1
+        for(int i=position-1;i<L->length-1;i++){
+            L->data[i]=L->data[i+1];
+        }
+        L->length--;
+        return 1;
+    }
+}
+
+//在顺序表中查找元素
+int research(seq_list *L,Type e){   //返回元素位置
+    if(L->length==0){
+        printf("顺序表为空\n");
+        return 0;
+    }else{
+        for(int i=0;i<=L->length-1;i++){
+            if(e==L->data[i]){
+                printf("查找到的元素位置为%d\n",i+1);
+                return 1;
+            }else{
+                printf("没有查找到该元素\n");
+                return 0;
+            }
+        }    
+    }
+}
+
 //遍历列表，看看是否添加成功 
 void traversal(seq_list *L){
     for(int i=0;i<L->length;i++){
@@ -61,8 +100,12 @@ int main(){
     append(&list,3);
     append(&list,4);
     insert(&list,3,3);
+    Type e;
+    delete(&list,2,&e);
     traversal(&list);
+    research(&list,3);
     printf("有%d个元素\n",list.length);
+    printf("删除的值为%d\n",e);
     printf("目前内存所占%d个字节\n",sizeof(list.data));
     return 0;
-}   
+}  
