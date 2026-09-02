@@ -74,6 +74,46 @@ int Insert(linked_list* p,int position,Type e){
     q->next=New;
 }
 
+//删除节点
+int delete(linked_list *head,int position){
+    if (head == NULL)
+    {
+        printf("链表为空，无法删除\\n");
+        return 0;
+    }
+    if(position<0){
+        printf("传入失败\n");
+        return 0;
+    }
+    //先找到要删除的前置节点，然后记录下来，最后改变指向关系并free
+    linked_list *L=head;
+    for(int i=0;i<position-1;i++){
+        L=L->next;
+        if(L==NULL){    //到尾节点了
+            return 0;
+        }
+    }   //获取到前继节点
+    if(L->next==NULL){
+        printf("删除位置错误\n");
+        return 0;
+    }
+    linked_list *delete=L->next;    //获取到要删除的节点
+    L->next=delete->next;    //指向后继节点
+    free(delete);
+    return 1;
+}
+
+//获取链表长度
+int length(linked_list *head){
+    int len=0;
+    linked_list *L=head->next;  //除去头节点
+    while(L!=NULL){ //L==null 指针没有指向任何节点
+        L=L->next;
+        len++;
+    }
+    return len;
+}
+
 int main(){
     linked_list *l=initList();
     Headinsert(l,30);
@@ -81,5 +121,7 @@ int main(){
     TailInsert(l,50);
     TailInsert(l,111);
     Insert(l,3,1234);
+    delete(l,3);
+    printf("长度为%d\n",length(l));
     traversal(l);
 }

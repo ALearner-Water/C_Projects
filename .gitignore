@@ -35,3 +35,9 @@ desktop.ini
 *.7z
 # 文本备份
 *~
+
+# Codex/PDF 等临时工作文件（仅忽略仓库根目录的 tmp）
+/tmp/
+
+# VS Code 或仓库级统一编译目录
+/.build/

@@ -106,6 +106,6 @@ int main(){
     research(&list,3);
     printf("有%d个元素\n",list.length);
     printf("删除的值为%d\n",e);
-    printf("目前内存所占%d个字节\n",sizeof(list.data));
+    printf("目前内存所占%zu个字节\n", sizeof(list.data));
     return 0;
 }  
