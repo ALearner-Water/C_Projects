@@ -41,3 +41,12 @@ desktop.ini
 
 # VS Code 或仓库级统一编译目录
 /.build/
+
+# 本地编辑器和 Codex 教学配置
+/.vscode/
+/.agents/
+/.codex/
+/AGENTS.md
+
+# 个人学习计划、进度、错题和复测记录（仅保留在本地）
+/Data_Structure/学习资料/
