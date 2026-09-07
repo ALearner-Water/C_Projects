@@ -32,12 +32,29 @@ void destroy_list(struct Node *head){
     
 }
 int main(void){
-    struct Node *node=create_node(42);
-    if(node==NULL){
+    struct Node *head=create_node(10);
+    if(head==NULL){
         return 1;
     }
-    printf("%d",node->data);
-    destroy_node(node);
-    node=NULL;
+    head->next=create_node(20);
+    if (head->next == NULL)
+    {
+        destroy_list(head);     //分配内存失败直接释放  
+        return 1;
+    }
+    head->next->next=create_node(30);
+    if (head->next->next == NULL)
+    {
+        destroy_list(head);
+        return 1;
+    }
+    struct Node *current=head;
+    while (current!=NULL)
+    {
+        printf("%d ",current->data);
+        current=current->next;
+    }
+    destroy_list(head);
+    head=NULL;
     return 0;
 }

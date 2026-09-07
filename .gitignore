@@ -48,5 +48,12 @@ desktop.ini
 /.codex/
 /AGENTS.md
 
-# 个人学习计划、进度、错题和复测记录（仅保留在本地）
-/Data_Structure/学习资料/
+# 个人学习状态与每日记录（仅保留在本地）
+# 通用教学规则、学期路线和模板可以纳入版本管理。
+/Data_Structure/学习资料/学习管理/进度看板.md
+/Data_Structure/学习资料/学习管理/学习档案.md
+/Data_Structure/学习资料/学习管理/错题记录.md
+/Data_Structure/学习资料/学习管理/滚动复测队列.md
+/Data_Structure/学习资料/周学习包/第*/
+/Data_Structure/学习资料/视频学习/观看记录.md
+/Data_Structure/学习资料/教材笔记/

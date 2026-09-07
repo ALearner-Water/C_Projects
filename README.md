@@ -5,7 +5,7 @@
 ## 目录
 
 - [`C_base/`](C_base/README.md)：C 语言基础练习，包括数组、指针、结构体和动态内存。
-- [`Data_Structure/`](Data_Structure/README.md)：线性表等数据结构实现，以及 LeetCode、测试和课程设计代码。
+- [`Data_Structure/`](Data_Structure/README.md)：一个学期的数据结构学习系统，包括教材路线、C17 实现、LeetCode、测试、滚动复测和课程设计。
 
 ## 编译
 
@@ -21,5 +21,5 @@ gcc -std=c17 -Wall -Wextra -Wpedantic source.c -o program
 
 - 使用 C17 标准。
 - 文件与函数名称优先使用有意义的 `snake_case`。
-- 编译产物、调试文件、编辑器配置和本地学习记录不提交。
+- 编译产物、调试文件、编辑器配置和个人学习记录不提交；不含个人状态的教学规则与通用模板可以纳入版本管理。
 - 练习代码可能保留逐步改进的过程；较完整的实现集中放在数据结构目录中。
