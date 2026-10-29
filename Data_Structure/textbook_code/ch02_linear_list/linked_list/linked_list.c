@@ -34,7 +34,7 @@ void traversal(linked_list *HEAD){
 }
 
 //尾插法前置需要获取尾节点
-linked_list *Tail(linked_list *head,Type e){
+linked_list *Tail(linked_list *head){
     linked_list *p=head;
     while (p->next!=NULL)
     {
@@ -72,6 +72,7 @@ int Insert(linked_list* p,int position,Type e){
     New->next=q->next;
     New->data=e;
     q->next=New;
+    return 1;
 }
 
 //删除节点
