@@ -29,7 +29,7 @@ queue* init(){
 //入队 使用尾插法
 int inqueue(queue *Q,EleType e){
     //新建节点
-    linked_queue *node=(*linked_queue)malloc(sizeof(linked_queue));
+    linked_queue *node=(linked_queue*)malloc(sizeof(linked_queue));
     node->data=e;
     node->next=NULL;
     Q->rear->next=node; //头节点的next存放新增节点地址
