@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef int ElmType;
 
@@ -55,7 +56,7 @@ void Traversal(LinkList L){
 int Link_Seek(LinkList L,ElmType e){
     if (L == NULL)
     {
-        return 0;
+        return -1;
     }
     LinkList temp = L->next;
     int cnt=1;
@@ -139,8 +140,8 @@ int Link_Delete(LinkList L,ElmType e){
 
 //反转链表 通过头插法不断往前插入
 void Reverse_Link(LinkList L){
-    LinkList Head=L;
-    LinkList temp = L->next;
+    LNode *Head=L;
+    LNode *temp = L->next;
     Head->next=NULL;
     while (temp!=NULL)
     {
@@ -155,102 +156,139 @@ void Reverse_Link(LinkList L){
 
 //合并链表
 LinkList List_Combine(LinkList L1,LinkList L2){
-    //创建2个遍历指针和一个合并链指针
-    LNode *t1=L1->next;
-    LNode *t2=L2->next;
-    LNode *R=L1;    //从头节点开始
-    while (t1!=NULL&&t2!=NULL)
+    //从小到大使用头插法
+    LNode *p=L1->next;
+    LNode *q=L2->next;
+    LNode *R=L1;
+    R->next=NULL;
+    while (p!=NULL&&q!=NULL)
     {
-        if (t1->data>=t2->data) //递减链表
+        if (p->data<q->data)
         {
-            R->next=t1; //将大的接入
-            R=t1;   //更新尾节点指向t1
-            t1=t1->next;
-        }
-        else{
-            R->next=t2; //否则接入t2
-            R = t2;     // 更新尾节点指向t2
-            t2=t2->next;
+            //头插法
+            LNode *tmp = p; // 拿出当前这个节点
+            p = p->next;    // p先在原链往前走一步！
+            tmp->next = R->next;
+            R->next = tmp;
+        }else
+        {
+            LNode *tmp = q; // 拿出当前这个节点
+            q = q->next;    // q先在原链往前走一步！
+            tmp->next = R->next;
+            R->next = tmp;
         }
     }
-    //将剩下的节点再接入
-    if (t1!=NULL)
+    while (p != NULL)
     {
-        R->next=t1;
-    }else{
-        R->next=t2;
+        LNode *tmp = p;
+        p = p->next;
+        tmp->next = R->next;
+        R->next = tmp;
     }
-    free(L2);        //L2上面已经没有节点了需要free，以免内存泄漏
+    while (q != NULL)
+    {
+        LNode *tmp = q;
+        q = q->next;
+        tmp->next = R->next;
+        R->next = tmp;
+    }
+    free(L2);
     return L1;
 }
 
 // 分割函数
 void Split_LinkList(LinkList L, ElmType e)
 {
-    // 先分成两端再拼到一起
-    LNode *max_head = NULL; // 大链的头尾指针
-    LNode *max_tail = NULL;
-    LNode *min_head = NULL; // 小链的头尾指针
-    LNode *min_tail = NULL;
-    LNode *P = L->next; // 指向链表的指针
-    while (P != NULL)
-    {
-        // 先存好下一个节点位置
-        LNode *next = P->next;
-        // 拼接大链
-        if (P->data >= e)
+    // 先分成两端再拼到一起，只需取下一段，剩下的就是另一段，最后拼接在一起
+        LNode *less_tail = L; // ≤e 这条链的尾，复用原表头
+        LNode *great_head = NULL;
+        LNode *great_tail = NULL;
+        LNode *P = L->next;
+        LNode *Next;
+
+        L->next = NULL; // 先清空原链表的有效链
+
+        while (P != NULL)
         {
-            if (max_tail == NULL)
+            Next = P->next; // 先保存下一个，防止断链丢失
+            if (P->data >= e)
             {
-                max_head = max_tail = P;
+                // 接到大于e的链
+                if (great_head == NULL)
+                {
+                    great_head = P;
+                    great_tail = P;
+                }
+                else
+                {
+                    great_tail->next = P;
+                    great_tail = P;
+                }
+                great_tail->next = NULL; // 截断，防止环
             }
             else
             {
-                max_tail->next = P; // 尾插法
-                max_tail = P;       // 更新尾节点
+                // 接到 <e 的链（原L）
+                less_tail->next = P;
+                less_tail = P;
+                less_tail->next = NULL;
             }
+            P = Next;
         }
-        // 拼接小链
-        else
-        {
-            if (min_tail == NULL)
-            {
-                min_head = min_tail = P;
-            }
-            else
-            {
-                min_tail->next = P; // 尾插法
-                min_tail = P;       // 更新尾节点
-            }
-        }
-        P = next;
-    }
-    // 合并两条链
-    if (min_tail != NULL)
-    {
-        // 有小于e的节点：小链 + 大链
-        L->next = min_head;
-        min_tail->next = max_head;
-    }
-    else
-    {
-        // min链为空，没有小于e的节点，直接接大链
-        L->next = max_head;
-    }
+        //最后合并 小在前
+        less_tail->next=great_head;
 }
 
 int main(){
     LinkList L=Link_Init();
-    //生成随机数存入链表
+    // 设置随机种子
+    srand((unsigned)time(NULL));
+    //生成随机数存入链表 （1）
     for (int i = 0; i < 10; i++)
     {
         int random=100+rand()%900;
         Head_Insert(L,random);
     }
+    //输出链表 （2）
     Traversal(L);
-    printf("请输入分隔值：");
-    int split=0;
-    scanf("%d",&split);
-    Split_LinkList(L,split);
+
+    //读入整数存在返回位置 （3）
+    printf("请输入整数：");
+    int val;
+    scanf("%d", &val);
+    Link_Seek(L,val);
+
+    //读入整数和插入位置 （4）
+    printf("请输入整数和插入位置：");
+    int insert;
+    int position;
+    scanf("%d", &insert);
+    scanf("%d", &position);
+    Link_Insert(L,position,insert);
     Traversal(L);
+    printf("\n");
+
+    //删除整数  (5)
+    printf("请输入整数：");
+    int delete;
+    scanf("%d", &delete);
+    Link_Delete(L,delete);
+    Traversal(L);
+    
+    //反转链表 （6）
+    Reverse_Link(L);
+    printf("\n");
+
+    //合并链表 （7）
+    LinkList L1=Link_Init();
+    LinkList L2=Link_Init();
+    for (int i = 9; i > 0; i--)
+    {
+        Head_Insert(L1,i);
+    }
+    for (int i = 20; i > 10; i--)
+    {
+        Head_Insert(L2, i);
+    }
+    List_Combine(L1,L2);
 }

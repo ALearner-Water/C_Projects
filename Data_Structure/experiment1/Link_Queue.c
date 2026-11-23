@@ -2,17 +2,19 @@
 #include <stdlib.h>
 typedef int ElType;
 
-//定义队列节点
-typedef struct queue{
+// 定义队列节点
+typedef struct queue
+{
     struct queue *next;
     ElType data;
-}QNode;
+} QNode;
 
-//再定义头尾指针 这是队列结构
-typedef struct link_q{
+// 再定义头尾指针 这是队列结构
+typedef struct link_q
+{
     QNode *front;
     QNode *rear;
-}QLink;
+} QLink;
 
 //做初始化 带头结点
 QLink* init(){
@@ -50,19 +52,21 @@ void Traversal(QLink *Q){
 }
 
     // 出队
-QNode *DeQueue(QLink *Q)
+int DeQueue(QLink *Q,int *val)
 {
     if (Q->front==Q->rear||Q==NULL)
     {
-        return NULL;
+        return 0;
     }
     QNode *node=Q->front->next;
+    *val=node->data;
     Q->front->next=node->next;
     if (Q->rear==node)
     {
         Q->rear=Q->front;
     }
-    return node;
+    free(node);
+    return 1;
 }
 
 //反转队列
@@ -71,28 +75,17 @@ void Reverse_Queue(QLink *Q){
     {
         return;
     }
-    //使用头插法不断插入
-    QNode *node=NULL;
-    QNode *de_node;
-    //将出队的元素插入链表
-    while ((de_node=DeQueue(Q))!=NULL)
-    {
-        de_node->next=node;
-        node=de_node;
-    }
-    //最后拼接
-    Q->front->next=node;
-    //重新定位尾指针
-    Q->rear=Q->front;
-    while (Q->rear->next!=NULL)
-    {
-        Q->rear=Q->rear->next;
-    }
+    //要符合队列先进先出的规则
+    int temp;
+    //使用递归先出队然后再挨个入队
+    DeQueue(Q,&temp);
+    Reverse_Queue(Q);
+    InQueue(Q,temp);
 }
 
 int main(){
     QLink *Q =init();
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 9; i++)
     {
         int random=100+rand()%900;
         InQueue(Q,random);

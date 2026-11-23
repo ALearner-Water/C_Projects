@@ -18,5 +18,11 @@ int main(){
         return 0;
     }
     float sum=(float)culmul(n)/(float)(culmul(n-m)*culmul(m));
-    printf("%.1f",sum);
+    printf("%.1f\n",sum);
+    float c58 = (float)culmul(8) / (float)(culmul(8 - 5) * culmul(5));
+    float c25 = (float)culmul(5) / (float)(culmul(5 - 2) * culmul(2));
+    float c07 = (float)culmul(7) / (float)(culmul(7 - 0) * culmul(0));
+    printf("c58=%.1f\n",c58);
+    printf("c25=%.1f\n",c25);
+    printf("c07=%.2f\n",c07);
 }

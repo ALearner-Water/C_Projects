@@ -1,0 +1,1 @@
+int random=100+rand()%900;
