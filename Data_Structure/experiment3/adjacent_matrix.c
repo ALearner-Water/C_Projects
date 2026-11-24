@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MaxINT 32767    //无穷远
+#define MaxINT 0x3f3f3f3f // 无穷远
 typedef int VType;  //顶点数据类型
 
 //邻接矩阵
@@ -85,9 +85,79 @@ void Traverse(AMGraph *G)
     }
 }
 
+//DFS 连通图
+void DFS(AMGraph* G,int v,int visited[]){
+    printf("%d ",G->vexs[v]);   //输出顶点
+    visited[v]=1;           //输出后标记为1
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        if (G->arcs[v][i]!=MaxINT&&visited[i]!=1)   //没被标记且有边
+        {
+            DFS(G,i,visited);
+        }
+    }
+}
+
+//DFS通用遍历
+void DFSTraverse(AMGraph *G,int v){
+    int visited[7]={0};
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        if (visited[i]!=1)
+        {
+            DFS(G,v,visited);
+        }     
+    }
+}
+
+//BFS遍历
+void BFS(AMGraph* G,int v,int visited[]){
+    //用队列装邻接点
+    int queue[100]={0};
+    int front=0;
+    int rear=0;
+    printf("%d ",G->vexs[v]);
+    visited[v]=1;
+    queue[rear++]=v;
+    //队不为空就还有点
+    while (front!=rear)
+    {
+        int cur=queue[front++]; //出队找邻接点
+        for (int i = 0; i < G->vexnum; i++)
+        {
+            if (G->arcs[cur][i]!=MaxINT&&visited[i]!=1)
+            {
+                printf("%d ",G->vexs[i]);   //输出
+                visited[i]=1;
+                queue[rear++]=i;   //入队
+            }
+        }
+        
+    }
+    
+}
+//BFS通用遍历
+void BFSTraverse(AMGraph* G){
+    int visited[7]={0};
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        if (visited[i]!=1)
+        {
+        BFS(G,i,visited);
+        }
+    }
+}
+
 int main()
 {
     AMGraph *G=CreateAMGraph();
     Traverse(G);
+    int visited_DFS[7]={0};
+    DFS(G,0,visited_DFS);
+    printf("\n");
+    int visited_BFS[7]={0};
+    BFS(G,0,visited_BFS);
+    printf("\n");
+    BFSTraverse(G);
     return 0;
 }

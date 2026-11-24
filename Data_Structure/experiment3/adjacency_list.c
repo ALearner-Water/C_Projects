@@ -84,8 +84,80 @@ void Traverse(ALGraph *G){
     }
 }
 
-int main(){
+//DFS遍历  连通图
+void DFS(ALGraph *G,int v,int visited[]){
+    printf("%d ",G->adjlist[v].data);   //输出取出的顶点
+    visited[v]=1;       //输出后标记1
+    ArcNode *p=G->adjlist[v].first;     //指向下一个节点
+    while (p!=NULL){
+        if (visited[p->adjvex]!=1)     //没被标记就继续递归
+        {
+            DFS(G,p->adjvex,visited);
+        }
+        p=p->next;      //被标记就继续找下一个邻接点
+    }
+}
+
+//通用DFS遍历
+void DFSTraverse(ALGraph *G,int v){
+    int visited[7]={0};
+    for (int i = 0; i < G->vexnum; i++)     //如果被标记就看下一个顶点
+    {
+        if (visited[i]!=1)          //找到连通分量
+        {
+            DFS(G,v,visited);       //对该连通分量DFS
+        }
+    }
+    
+}
+
+//BFS遍历
+void BFS(ALGraph *G,int v,int visited[]){
+    //构建队列来处理邻接点
+    int queue[100]={0};
+    int front=0;
+    int rear=0; //头尾指针
+    //打印头顶点并入队
+    printf("%d ",G->adjlist[v].data);
+    visited[v]=1;
+    queue[rear++]=v;
+    //队非空就还有顶点没遍历
+    while (front!=rear)
+    {
+        //出队然后找邻接点将邻接点入队
+        int cur=queue[front++];
+        ArcNode *p=G->adjlist[cur].first;   //拿到表头
+        while (p!=NULL)
+        {
+            if (visited[p->adjvex]!=1)
+            {
+                printf("%d ",G->adjlist[p->adjvex].data);
+                visited[p->adjvex]=1;
+                queue[rear++]=p->adjvex;
+            }
+            p=p->next;
+        }      
+    }   
+}
+
+// BFS通用遍历
+void BFSTraverse(ALGraph* G){
+    int visited[7]={0};
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        if (visited[i]!=1)
+        {
+            BFS(G,i,visited);
+        }
+    }
+}
+
+int main()
+{
     ALGraph *G=CreateALGraph();
     Traverse(G);
+    DFSTraverse(G,0);
+    printf("\n");
+    BFSTraverse(G);
     return 0;
 }
