@@ -148,6 +148,70 @@ void BFSTraverse(AMGraph* G){
     }
 }
 
+//获得数组下标
+int Locate(AMGraph *G,VType v){
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        if (G->vexs[i]==v)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+//Prim算法
+void Prim(AMGraph *G,VType v0){
+    int sum =0; //定义总权
+    // 创建辅助数组
+    struct
+    {
+        VType v;     // 顶点
+        int lowcast; // 到树的最短距离 =0代表已经纳入树
+    } closedge[100]; // 该点到树的距离
+
+    // 定位顶点并做初始化
+    int point=Locate(G,v0);
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        closedge[i].v=v0;   //每个点到集合的最短点
+        closedge[i].lowcast=G->arcs[point][i];  //两点之间的距离
+    }
+    //顶点加入集合
+    closedge[point].lowcast=0;
+    //开始不断找点 循环n-1次
+    for (int j = 1; j < G->vexnum ; j++)
+    {
+        int min =MaxINT;
+        int min_point=-1;   //最小值下标
+        //循环找最小lowcast
+        for (int k = 0; k < G->vexnum; k++)
+        {
+            if (closedge[k].lowcast!=0&&closedge[k].lowcast<min)
+            {
+                min=closedge[k].lowcast;
+                min_point=k;
+            }
+        }
+        //找到后将该点加入集合
+        closedge[min_point].lowcast=0;
+        sum+=min;
+        printf("%d -- %d  %d\n",closedge[min_point].v,G->vexs[min_point],min);
+        // 更新closedge数组
+        for (int w = 0; w < G->vexnum; w++)
+        {
+            if (closedge[w].lowcast != 0)
+            {
+                if (closedge[w].lowcast > G->arcs[min_point][w])
+                {
+                    closedge[w].lowcast=G->arcs[min_point][w];
+                    closedge[w].v=G->vexs[min_point];
+                }
+            }
+        }
+    }
+    printf("总权值为%d",sum);
+}
+
 int main()
 {
     AMGraph *G=CreateAMGraph();
@@ -159,5 +223,7 @@ int main()
     BFS(G,0,visited_BFS);
     printf("\n");
     BFSTraverse(G);
+    printf("\n");
+    Prim(G,0);
     return 0;
 }

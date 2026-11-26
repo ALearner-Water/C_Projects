@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 typedef int VType; // 顶点数据类型
+#define MaxINT 0x3f3f3f3f // 无穷远
 // 邻接表
 // 边节点
 typedef struct ArcNode
@@ -152,6 +153,76 @@ void BFSTraverse(ALGraph* G){
     }
 }
 
+//Prim算法
+int Locate(ALGraph *G,VType v0){
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        if (v0==G->adjlist[i].data)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void Prim(ALGraph *G,VType v0){
+    int sum=0;
+    //先构造辅助数组
+    struct 
+    {
+        VType v;    //顶点与集合最近的点
+        int lowcost;    //最小权
+    }closedge[100]; //顶点到集合的最小边
+    //初始化closedge
+    int point=Locate(G,v0);
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        closedge[i].lowcost=MaxINT;
+        closedge[i].v=G->adjlist[point].data;
+    }
+    ArcNode *node = G->adjlist[point].first;
+    while (node != NULL)
+    {
+        closedge[node->adjvex].lowcost = node->weigth;
+        closedge[node->adjvex].v= v0;
+        node = node->next;
+    }
+    //将v0放入集合
+    closedge[point].lowcost=0;
+    //开始找最小值  n个顶点有n-1条边
+    for (int i = 1; i < G->vexnum; i++)
+    {
+        int min = MaxINT;
+        int min_point = -1;
+        //找最小值
+        for (int j = 0; j < G->vexnum; j++)
+        {
+            if (closedge[j].lowcost!=0&&closedge[j].lowcost<min)
+            {
+                min=closedge[j].lowcost;
+                min_point=j;
+            }
+        }
+        //找到之后打印然后将点加入集合
+        printf("%d -- %d  %d\n",closedge[min_point].v,G->adjlist[min_point].data,min);
+        sum+=closedge[min_point].lowcost;
+        closedge[min_point].lowcost=0;
+        //更新closedge数组
+        node=G->adjlist[min_point].first;
+        while (node!=NULL)
+        {
+            //邻接点还无加入集合且权比现在的大
+            if (closedge[node->adjvex].lowcost!=0&&closedge[node->adjvex].lowcost > node->weigth)
+            {
+                closedge[node->adjvex].v=G->adjlist[min_point].data;
+                closedge[node->adjvex].lowcost=node->weigth;
+            }
+            node=node->next;
+        }   
+    }
+    printf("最小生成树总权值 = %d\n", sum);
+}
+
 int main()
 {
     ALGraph *G=CreateALGraph();
@@ -159,5 +230,7 @@ int main()
     DFSTraverse(G,0);
     printf("\n");
     BFSTraverse(G);
+    printf("\n");
+    Prim(G,0);
     return 0;
 }
