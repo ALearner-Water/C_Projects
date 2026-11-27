@@ -164,7 +164,6 @@ int Locate(ALGraph *G,VType v0){
     }
     return -1;
 }
-
 void Prim(ALGraph *G,VType v0){
     int sum=0;
     //先构造辅助数组
@@ -223,14 +222,84 @@ void Prim(ALGraph *G,VType v0){
     printf("最小生成树总权值 = %d\n", sum);
 }
 
+//Kruskal算法  只是提取边的代码不一样其他完全一样
+typedef struct 
+{
+    VType Head;
+    VType Tail;
+    int lowcost;
+}Edge;
+
+//找根节点
+VType Find(VType VexSet[],VType v0){
+    if (VexSet[v0]!=v0)
+    {
+        VexSet[v0]=Find(VexSet,VexSet[v0]);
+    }
+    return VexSet[v0];
+}
+void Kruskal(ALGraph *G){
+    Edge edge[9];
+    VType VexSet[7];
+    int edge_point=0;
+    int sum=0;
+    //开始初始化
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        //这里不一样 邻接表会存两次边 我们只需要小到大的那一条
+        ArcNode *node=G->adjlist[i].first;
+        while (node!=NULL)
+        {
+            if (i<node->adjvex)
+            {
+                edge[edge_point].Head=G->adjlist[i].data;
+                edge[edge_point].Tail=G->adjlist[node->adjvex].data;
+                edge[edge_point].lowcost=node->weigth;
+                edge_point++;
+            }
+            node=node->next;
+        }
+        VexSet[i]=i;
+    }
+    //n-1条边
+    for (int i = 1; i < G->vexnum; i++)
+    {
+        //找最小的边
+        int min=MaxINT;
+        int min_point=-1;
+        for (int j = 0; j <edge_point; j++)
+        {
+            if (Find(VexSet,edge[j].Head)!=Find(VexSet,edge[j].Tail))   //根节点不一样
+            {
+                if (min>edge[j].lowcost)
+                {
+                    min=edge[j].lowcost;
+                    min_point=j;
+                }
+            }
+        }
+        //找到之后输出打印然后更新根节点
+        sum+=min;
+        VType root1=Find(VexSet,edge[min_point].Head);
+        VType root2=Find(VexSet,edge[min_point].Tail);
+        VexSet[root1]=root2;
+        printf("选中边 (%d , %d) 权值：%d\n", edge[min_point].Head, edge[min_point].Tail, min);
+    }
+    printf("总权值为%d",sum);
+}
+
 int main()
 {
     ALGraph *G=CreateALGraph();
+    printf("输出邻接表\n");
     Traverse(G);
+    printf("\nDFS遍历\n");
     DFSTraverse(G,0);
-    printf("\n");
+    printf("\nBFS遍历\n");
     BFSTraverse(G);
-    printf("\n");
+    printf("\nPrim算法生成最小生成树\n");
     Prim(G,0);
+    printf("\nKruskal算法生成最小生成树\n");
+    Kruskal(G);
     return 0;
 }

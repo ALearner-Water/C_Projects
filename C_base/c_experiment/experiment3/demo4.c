@@ -24,7 +24,7 @@ int main(void)
         count[month - 1]++;
     }
 
-    printf("===== 各月出生率统计（总人数：300）=====\n");
+    printf("各月出生率统计（总人数：300）\n");
     for (int i = 0; i < 12; i++)
     {
         float rate = count[i] / 300.0f;

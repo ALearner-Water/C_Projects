@@ -22,9 +22,10 @@ int main(){
     scanf("%d,%d,%d,%d",&a,&b,&c,&d);
     int arr[4]={a,b,c,d};
     Sort(arr,sizeof(arr)/sizeof(arr[0]));
+    printf("排序结果如下：\n");
     for (int i = 0; i < 4; i++)
     {
         printf("%d ",*(arr+i));
-    }1
+    }
     return 0;
 }

@@ -132,7 +132,6 @@ void BFS(AMGraph* G,int v,int visited[]){
                 queue[rear++]=i;   //入队
             }
         }
-        
     }
     
 }
@@ -212,18 +211,84 @@ void Prim(AMGraph *G,VType v0){
     printf("总权值为%d",sum);
 }
 
+// Kruskal算法
+//构造边结构体存边
+typedef struct 
+{
+    VType Head;
+    VType Tail;
+    int lowcost;
+}Edge;
+
+//查找两个点是否是同一个父亲 是否在一个连通分量
+VType Find(VType VexSet[],VType v0){    //VexSet[v]存的是v的父亲节点
+    if (VexSet[v0]!=v0)     //父节点不是自己  有节点相连
+    {
+        VexSet[v0]=Find(VexSet,VexSet[v0]); //不断递归找到根
+    }
+    return VexSet[v0];
+}
+
+void Kruskal(AMGraph *G){
+    //创建边集数组和并查集数组
+    int sum=0;
+    Edge edge[9];
+    int edge_point=0;
+    VType VexSet[7];
+    //初始化两个数组
+    for (int i = 0; i < G->vexnum; i++)
+    {
+        for (int j = i+1; j < G->vexnum; j++)   //只取上三角的元素
+        {
+            if (G->arcs[i][j]!=MaxINT)  //有边
+            {
+                //存储边信息
+                edge[edge_point].Head=G->vexs[i];
+                edge[edge_point].Tail=G->vexs[j];
+                edge[edge_point].lowcost=G->arcs[i][j];
+                edge_point++;
+            }
+        }
+        VexSet[i]=i;    //初始状态每个节点的根都是自己
+    } 
+    //n-1条边
+    for (int i = 1; i < G->vexnum; i++)
+    {
+        //开始找最小权
+        int min=MaxINT;
+        int min_point=-1;
+        for (int j = 0; j < edge_point; j++)
+        {
+            if (min>edge[j].lowcost&&Find(VexSet,edge[j].Head)!=Find(VexSet,edge[j].Tail))  //不是同一个连通分量且边最小
+            {  
+                min=edge[j].lowcost;
+                min_point=j;
+            }
+        }
+        // 找到之后将点的根节点更新
+        VType root1 = Find(VexSet, edge[min_point].Head);
+        VType root2 = Find(VexSet, edge[min_point].Tail);
+        VexSet[root1] = root2;
+        sum += min;
+        printf("选中边 (%d , %d) 权值：%d\n", edge[min_point].Head, edge[min_point].Tail, min);
+    }
+    printf("总权值为%d\n",sum);
+}
+
 int main()
 {
     AMGraph *G=CreateAMGraph();
+    printf("输出邻接矩阵\n");
     Traverse(G);
+    printf("\nDFS遍历\n");
     int visited_DFS[7]={0};
     DFS(G,0,visited_DFS);
-    printf("\n");
+    printf("\nBFS遍历\n");
     int visited_BFS[7]={0};
     BFS(G,0,visited_BFS);
-    printf("\n");
-    BFSTraverse(G);
-    printf("\n");
+    printf("\nPrim生成最小生成树\n");
     Prim(G,0);
+    printf("\nKruskal生成最小生成树\n");
+    Kruskal(G);
     return 0;
 }
